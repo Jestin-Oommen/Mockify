@@ -16,8 +16,9 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider appearance={{
       baseTheme:dark
-    }}>
-    <html lang="en" suppressHydrationWarning>
+    }}> 
+    {/* suppressHydrationWarning */}
+    <html lang="en" >  
       <body
         className={`${inter.className} `}
       >
