@@ -1,13 +1,15 @@
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 import Image from 'next/image'
 import React from 'react'
-import Logo from "../lib/logo.png"
+import Logo from "../lib/logo_mockify.png"
 import Link from 'next/link'
 import { Button } from './ui/button'
 import { ChevronDown, FileText, GraduationCap, LayoutDashboard, PenIcon, StarIcon } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu'
+import { checkUser } from '../lib/checkuser'
 
-const Header = () => {
+const Header = async() => {
+  await checkUser()
   return (
     <header className='fixed top-0 w-full border-b bg-background/80 backdrop-blur-md z-50 
     supports-[backdrop-filer]:bg-background/60'>
