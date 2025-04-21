@@ -24,6 +24,8 @@ import { useUser } from "@clerk/nextjs";
 import { entriesToMarkdown } from "@/app/lib/helper";
 import { resumeSchema } from "@/app/lib/schema";
 import html2pdf from "html2pdf.js/dist/html2pdf.min.js";
+import { reviewResumeWithATS } from "@/actions/resume";
+
 
 export default function ResumeBuilder({ initialContent }) {
   const [activeTab, setActiveTab] = useState("edit");
@@ -112,6 +114,22 @@ export default function ResumeBuilder({ initialContent }) {
 
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const [isReviewing, setIsReviewing] = useState(false);
+const [reviewFeedback, setReviewFeedback] = useState(null);
+
+const handleATSReview = async () => {
+  setIsReviewing(true);
+  try {
+    const feedback = await reviewResumeWithATS(previewContent);
+    setReviewFeedback(feedback);
+  } catch (error) {
+    toast.error("Failed to get ATS feedback");
+  } finally {
+    setIsReviewing(false);
+  }
+};
+
+
   const generatePDF = async () => {
     setIsGenerating(true);
     try {
@@ -183,6 +201,20 @@ export default function ResumeBuilder({ initialContent }) {
               </>
             )}
           </Button>
+          <Button onClick={handleATSReview} disabled={isReviewing}>
+  {isReviewing ? (
+    <>
+      <Loader2 className="h-4 w-4 animate-spin" />
+      Reviewing...
+    </>
+  ) : (
+    <>
+      <Monitor className="h-4 w-4" />
+      ATS Review
+    </>
+  )}
+</Button>
+
         </div>
       </div>
 
@@ -412,6 +444,12 @@ export default function ResumeBuilder({ initialContent }) {
               />
             </div>
           </div>
+          {reviewFeedback && (
+          <div className="mt-6 border rounded-lg p-4 bg-muted/50 prose max-w-none">
+    <MDEditor.Markdown source={reviewFeedback} />
+        </div>
+          )}
+          
         </TabsContent>
       </Tabs>
     </div>

@@ -96,3 +96,39 @@ export async function improveWithAI({ current, type }) {
     throw new Error("Failed to improve content");
   }
 }
+
+export async function reviewResumeWithATS(resumeContent) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  const prompt = `
+    You're an ATS (Applicant Tracking System) and resume expert. Review the following resume for ATS optimization:
+
+    --- Resume Content ---
+    ${resumeContent}
+    ----------------------
+
+    Provide detailed feedback on:
+    1. ATS friendliness (formatting, keywords, parsing).
+    2. Industry relevance and use of appropriate terminology.
+    3. Grammar, clarity, and conciseness.
+    4. Suggestions for improvement.
+    
+    Be professional, clear, and structured. Return the response in Markdown.
+  `;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    return response.text().trim();
+  } catch (error) {
+    console.error("Error reviewing resume:", error);
+    throw new Error("Failed to review resume");
+  }
+}
