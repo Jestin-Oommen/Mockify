@@ -11,8 +11,10 @@ export default async function DashboardPage() {
   if (!isOnboarded) {
     redirect("/onboarding");
   }
-
+  
   const insights = await getIndustryInsights();
+  console.log(insights)
+  
 
   return (
     <div className="container mx-auto">

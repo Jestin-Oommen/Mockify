@@ -34,7 +34,7 @@ export const generateAIInsights = async (industry) => {
   const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
 
   return JSON.parse(cleanedText);
-  console.log(cleanedText)
+  
 };
 
 export async function getIndustryInsights() {
